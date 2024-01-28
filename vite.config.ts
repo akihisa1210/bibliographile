@@ -4,9 +4,19 @@ import { crx, defineManifest } from "@crxjs/vite-plugin";
 
 const manifest = defineManifest({
   manifest_version: 3,
-  name: "CRXJS React Vite Example",
-  version: "1.0.0",
-  action: { default_popup: "index.html" },
+  name: "bibliographile",
+  version: "0.1.0",
+  permissions: ["contextMenus", "tabs"],
+  background: {
+    service_worker: "src/background.ts",
+  },
+  host_permissions: ["<all_urls>"],
+  content_scripts: [
+    {
+      matches: ["<all_urls>"],
+      js: ["src/content/index.tsx"],
+    },
+  ],
 });
 
 export default defineConfig({
