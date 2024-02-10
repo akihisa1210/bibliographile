@@ -1,4 +1,9 @@
 import { createRoot } from 'react-dom/client';
+import '@mantine/core/styles.css';
+import { createTheme, MantineProvider } from '@mantine/core';
+
+const theme = createTheme({
+});
 
 console.log('content script');
 
@@ -16,6 +21,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   const Main = () => {
     return (
+      <MantineProvider theme={theme}>
        <div
         style={{
           position: 'absolute',
@@ -43,6 +49,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             </div>
         </div>
       </div>
+      </MantineProvider>
     );
   };
   
