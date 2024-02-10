@@ -34,6 +34,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const xp = new XMLParser();
 
   const parsedXML = xp.parse(body);
+  console.log(parsedXML);
 
   // 検索結果が1つしかない場合は、itemは書誌情報のオブジェクトになる
   // 検索結果が複数ある場合は、itemは書誌情報のオブジェクトの配列になる
@@ -46,7 +47,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     const author = item.author ?? "N/A";
     const bookTitle = item["dc:title"] ?? "N/A";
     const publisher = item["dc:publisher"] ?? "N/A";
-    const publicationYear = item["dc:date"]?.["#text"] ?? "N/A";
+    const publicationYear = item["dc:date"] ?? "N/A";
 
     return {
       author,
