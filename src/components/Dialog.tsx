@@ -2,6 +2,7 @@ import { CSSProperties } from "react";
 import { CloseButton } from "./CloseButton";
 import { BibliographyTable } from "./BibliographyTable";
 import { Bibliography } from "../Bibliography";
+import styles from "../index.module.css";
 
 type DialogProps = {
   opened: boolean;
@@ -26,9 +27,18 @@ export const Dialog = (props: DialogProps) => {
 
   return (
     // ダイアログ内のクリックイベントは親要素に伝播させない
-    <div style={style} onClick={(event) => event.stopPropagation()}>
-      {searchTerm}
-      <CloseButton onClose={onClose} />
+    <div
+      className={styles.bibliographile__dialog}
+      style={style}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className={styles.bibliographile__dialog__header}>
+        {" "}
+        <span className={styles.bibliographile__dialog__title}>
+          {searchTerm}
+        </span>
+        <CloseButton onClose={onClose} />
+      </div>
       <BibliographyTable bibliographyList={bibliographyList} />
     </div>
   );

@@ -1,4 +1,5 @@
 import { Bibliography } from "../Bibliography";
+import styles from "../index.module.css";
 
 export const BibliographyTable = ({
   bibliographyList,
@@ -6,9 +7,10 @@ export const BibliographyTable = ({
   bibliographyList: Bibliography[];
 }) => {
   return (
-    <table>
+    <table className={styles.bibliographile__dialog__table}>
       <thead>
         <tr>
+          <th></th>
           <th>Author</th>
           <th>Title</th>
           <th>Publisher</th>
@@ -18,6 +20,11 @@ export const BibliographyTable = ({
       <tbody>
         {bibliographyList.map((bibliography, index) => (
           <tr key={index}>
+            <td>
+              <button className={styles.bibliographile__copy_button}>
+                Copy
+              </button>
+            </td>
             <td>{bibliography.author}</td>
             <td>『{bibliography.title}』</td>
             <td>{bibliography.publisher}</td>

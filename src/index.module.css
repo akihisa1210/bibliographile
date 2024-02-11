@@ -1,0 +1,66 @@
+.bibliographile__dialog {
+  width: 50vw;
+  margin: 1rem auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 0px 0.5rem 1rem 0px rgba(0, 0, 0, 0.1);
+}
+
+.bibliographile__dialog__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.bibliographile__dialog__title {
+  font-size: 1.5rem;
+}
+
+.bibliographile__close_button {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.bibliographile__copy_button {
+  padding: 0.3em 0.5em;
+  margin: 0;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  font-size: 0.8em;
+  border-radius: 0.3em;
+}
+
+.bibliographile__dialog__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bibliographile__dialog__table th,
+.bibliographile__dialog__table td {
+  text-align: left;
+  padding: 0.5em;
+  border-bottom: 1px solid #ddd;
+}
+
+.bibliographile__dialog__table th {
+  background-color: #f0f0f0;
+}
+
+.bibliographile__dialog__table tbody {
+  display: block;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.bibliographile__dialog__table thead,
+.bibliographile__dialog__table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
