@@ -1,5 +1,6 @@
 import type { Story } from "@ladle/react";
 import { Dialog } from "./Dialog";
+import { Bibliography } from "../Bibliography";
 
 const bibliographyList: Bibliography[] = [
   {
@@ -22,11 +23,28 @@ const bibliographyList: Bibliography[] = [
   },
 ];
 
+const bigBibliography: Bibliography = {
+  author: "ああああああ, ああああああ",
+  title:
+    "ああああああああああああああああああああああああああああああああああああ",
+  publisher: "ああああああ",
+  publicationYear: "2021",
+};
+
 export const OpenedDialog: Story = () => (
   <Dialog
     opened={true}
     searchTerm="SearchedTitle"
     bibliographyList={bibliographyList}
+    onClose={() => {}}
+  />
+);
+
+export const BigDialog: Story = () => (
+  <Dialog
+    opened={true}
+    searchTerm="SearchedTitle"
+    bibliographyList={Array(20).fill(bigBibliography)}
     onClose={() => {}}
   />
 );
