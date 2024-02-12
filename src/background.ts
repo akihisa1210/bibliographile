@@ -1,22 +1,23 @@
 console.log("background.ts");
 
 import { Bibliography } from "./Bibliography";
+import { SearchResultsMessage } from "./SearchResultsMessage";
 import { XMLParser } from "fast-xml-parser";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "bibliographile",
-    title: "書誌情報取得",
+    title: "国会図書館で「%s」が含まれる書籍を検索",
     contexts: ["selection"],
   });
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  const title = info.selectionText;
-  if (!title) {
+  const searchTerm = info.selectionText;
+  if (!searchTerm) {
     return;
   }
-  console.log(title);
+  console.log(searchTerm);
 
   // 最大取得件数
   const MAX_RESULTS = 20;
@@ -25,7 +26,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const DATA_PROVIDER_ID = "iss-ndl-opac";
 
   const url = `https://ndlsearch.ndl.go.jp/api/opensearch?title=${encodeURIComponent(
-    title
+    searchTerm
   )}&cnt=${MAX_RESULTS}&dpid=${DATA_PROVIDER_ID}`;
 
   const res = await fetch(url);
@@ -34,6 +35,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const xp = new XMLParser();
 
   const parsedXML = xp.parse(body);
+  console.log(parsedXML);
 
   // 検索結果が1つしかない場合は、itemは書誌情報のオブジェクトになる
   // 検索結果が複数ある場合は、itemは書誌情報のオブジェクトの配列になる
@@ -46,7 +48,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     const author = item.author ?? "N/A";
     const bookTitle = item["dc:title"] ?? "N/A";
     const publisher = item["dc:publisher"] ?? "N/A";
-    const publicationYear = item["dc:date"]?.["#text"] ?? "N/A";
+    const publicationYear = item["dc:date"] ?? "N/A";
 
     return {
       author,
@@ -58,12 +60,15 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   console.log(bibliographies);
 
+  const data: SearchResultsMessage = {
+    searchTerm,
+    bibliographies,
+  };
+
   try {
     const response = await chrome.tabs.sendMessage(tab.id, {
       type: "BIBLIOGRAPHIES",
-      data: {
-        bibliographies,
-      },
+      data,
     });
     console.log(response);
   } catch (error) {
