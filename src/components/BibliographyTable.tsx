@@ -1,5 +1,6 @@
 import { Bibliography } from "../Bibliography";
 import styles from "../index.module.css";
+import { CopyButton } from "./CopyButton";
 
 export const BibliographyTable = ({
   bibliographyList,
@@ -21,9 +22,11 @@ export const BibliographyTable = ({
         {bibliographyList.map((bibliography, index) => (
           <tr key={index}>
             <td>
-              <button className={styles.bibliographile__copy_button}>
-                Copy
-              </button>
+              <CopyButton
+                onCopy={() => {
+                  console.log("copy");
+                }}
+              />
             </td>
             <td>{bibliography.author}</td>
             <td>『{bibliography.title}』</td>

@@ -52,6 +52,11 @@
   background-color: #f0f0f0;
 }
 
+.bibliographile__dialog__table th:first-child,
+.bibliographile__dialog__table td:first-child {
+  width: 3.5em;
+}
+
 .bibliographile__dialog__table tbody {
   display: block;
   max-height: 50vh;
