@@ -35,7 +35,7 @@ export const Dialog = (props: DialogProps) => {
       <div className={styles.bibliographile__dialog__header}>
         {" "}
         <span className={styles.bibliographile__dialog__title}>
-          {searchTerm}
+          「{searchTerm}」を含む書籍
         </span>
         <CloseButton onClose={onClose} />
       </div>

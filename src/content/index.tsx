@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useState, useEffect } from "react";
 import { App } from "../components/App";
 import { Dialog } from "../components/Dialog";
+import { SearchResultsMessage } from "../SearchResultsMessage";
 
 console.log("content script");
 
@@ -16,13 +17,18 @@ document.addEventListener(
   true
 );
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  // TODO messageに型をつける
+chrome.runtime.onMessage.addListener(function (
+  message: { data: SearchResultsMessage },
+  sender,
+  sendResponse
+) {
   console.log("content script received message");
   console.log(message);
   console.log(sender);
   console.log(sendResponse);
   sendResponse({ farewell: "goodbye" });
+
+  const { searchTerm, bibliographies } = message.data;
 
   // TODO ポップアップをタブで切り替えてレスポンスのXMLを表示できるようにする
 
@@ -53,8 +59,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       <App position={{ x: `${mouseX}px`, y: `${mouseY}px` }}>
         <Dialog
           opened={opened}
-          searchTerm={message.data.searchTerm}
-          bibliographyList={message.data.bibliographies}
+          searchTerm={searchTerm}
+          bibliographyList={bibliographies}
           onClose={handlePageClick}
         />
       </App>
