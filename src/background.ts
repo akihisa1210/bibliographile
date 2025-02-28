@@ -66,6 +66,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   };
 
   try {
+    if (!tab?.id) {
+      throw new Error("Tab ID is not available");
+    }
     const response = await chrome.tabs.sendMessage(tab.id, {
       type: "BIBLIOGRAPHIES",
       data,
