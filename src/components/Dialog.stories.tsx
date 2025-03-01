@@ -36,6 +36,7 @@ export const OpenedDialog: Story = () => (
     opened={true}
     searchTerm="SearchedTitle"
     bibliographyList={bibliographyList}
+    position={{ x: 100, y: 100 }}
     onClose={() => {}}
   />
 );
@@ -45,6 +46,7 @@ export const BigDialog: Story = () => (
     opened={true}
     searchTerm="SearchedTitle"
     bibliographyList={Array(20).fill(bigBibliography)}
+    position={{ x: 100, y: 100 }}
     onClose={() => {}}
   />
 );

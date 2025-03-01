@@ -1,36 +1,59 @@
 import { createRoot } from "react-dom/client";
 import { useState, useEffect } from "react";
-import { App } from "../components/App";
 import { Dialog } from "../components/Dialog";
 import { SearchResultsMessage } from "../SearchResultsMessage";
 
-console.log("content script");
+console.log("content script loaded");
 
-let mouseX = 0;
-let mouseY = 0;
-document.addEventListener(
-  "contextmenu",
-  (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-  },
-  true
-);
+// マウス位置をグローバルに管理
+const mousePosition = {
+  x: 0,
+  y: 0,
+};
+
+// 右クリック時のマウス位置を保存
+document.addEventListener("contextmenu", (event) => {
+  console.log("contextmenu event", event.clientX, event.clientY);
+  mousePosition.x = event.clientX;
+  mousePosition.y = event.clientY;
+}, true);
+
+// 既存のコンテナを削除（再注入時の重複を防ぐ）
+const cleanup = () => {
+  const existingContainer = document.getElementById("bibliographile-extension-root");
+  if (existingContainer) {
+    existingContainer.remove();
+  }
+};
+
+// 初期化時にクリーンアップを実行
+cleanup();
 
 chrome.runtime.onMessage.addListener(function (
-  message: { data: SearchResultsMessage },
-  sender,
+  message: { type: string; data?: SearchResultsMessage },
+  _sender,
   sendResponse
 ) {
-  console.log("content script received message");
-  console.log(message);
-  console.log(sender);
-  console.log(sendResponse);
-  sendResponse({ farewell: "goodbye" });
+  console.log("Message received:", message);
 
+  // PINGメッセージの処理
+  if (message.type === "PING") {
+    console.log("Received PING message");
+    sendResponse({ status: "ready" });
+    return true; // 非同期レスポンスを示す
+  }
+
+  if (message.type !== "BIBLIOGRAPHIES" || !message.data) {
+    console.log("Not a BIBLIOGRAPHIES message");
+    return;
+  }
+
+  // 既存のダイアログを削除
+  cleanup();
+
+  console.log("Current mouse position:", mousePosition);
   const { searchTerm, bibliographies } = message.data;
-
-  // TODO ポップアップをタブで切り替えてレスポンスのXMLを表示できるようにする
+  console.log("Creating dialog with search term:", searchTerm);
 
   const Main = () => {
     const [opened, setOpened] = useState(true);
@@ -39,12 +62,13 @@ chrome.runtime.onMessage.addListener(function (
       setOpened(false);
     };
 
-    const close = () => setOpened(false);
-
     useEffect(() => {
+      console.log("Dialog mounted with position:", mousePosition);
       const handlePageClick = () => {
         if (opened) {
-          close();
+          setOpened(false);
+          // ダイアログを閉じた後にコンテナを削除
+          cleanup();
         }
       };
 
@@ -55,19 +79,39 @@ chrome.runtime.onMessage.addListener(function (
       };
     }, [opened]);
 
+    // スクロール位置を考慮した表示位置の計算
+    const displayPosition = {
+      x: mousePosition.x,
+      y: mousePosition.y,
+    };
+
+    console.log("Rendering dialog at position:", displayPosition);
+
     return (
-      <App position={{ x: `${mouseX}px`, y: `${mouseY}px` }}>
-        <Dialog
-          opened={opened}
-          searchTerm={searchTerm}
-          bibliographyList={bibliographies}
-          onClose={handlePageClick}
-        />
-      </App>
+      <Dialog
+        opened={opened}
+        searchTerm={searchTerm}
+        bibliographyList={bibliographies}
+        position={displayPosition}
+        onClose={handlePageClick}
+      />
     );
   };
 
-  const container = document.createElement("bibliographile-extension-root");
-  document.body.after(container);
-  createRoot(container).render(<Main />);
+  try {
+    console.log("Creating container element");
+    const container = document.createElement("div");
+    container.id = "bibliographile-extension-root";
+    document.body.appendChild(container);
+    console.log("Container added to body");
+    
+    createRoot(container).render(<Main />);
+    console.log("Dialog rendered");
+  } catch (error) {
+    console.error("Error rendering dialog:", error);
+  }
+
+  // メッセージ受信を確認
+  sendResponse({ status: "success" });
+  return true; // 非同期レスポンスを示す
 });
