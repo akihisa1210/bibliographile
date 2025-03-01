@@ -1,4 +1,5 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { Dialog as HeadlessDialog, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useState } from "react";
 import { CloseButton } from "./CloseButton";
 import { BibliographyTable } from "./BibliographyTable";
 import { Bibliography } from "../Bibliography";
@@ -44,40 +45,39 @@ export const Dialog = (props: DialogProps) => {
     setDialogPosition({ x, y });
   }, [opened, position]);
 
-  if (!opened) return null;
-
-  const style: CSSProperties = {
-    position: "fixed",
-    zIndex: 2147483550,
-    backgroundColor: "white",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    padding: "16px",
-    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
-    left: `${dialogPosition.x}px`,
-    top: `${dialogPosition.y}px`,
-    maxWidth: "80vw",
-    maxHeight: "80vh",
-    overflow: "auto",
-  };
-
-  console.log("Dialog style", style);
-
   return (
-    // ダイアログ内のクリックイベントは親要素に伝播させない
-    <div
-      className={styles.bibliographile__dialog}
-      style={style}
-      onClick={(event) => event.stopPropagation()}
-    >
-      <div className={styles.bibliographile__dialog__header}>
-        {" "}
-        <span className={styles.bibliographile__dialog__title}>
-          「{searchTerm}」を含む書籍
-        </span>
-        <CloseButton onClose={onClose} />
-      </div>
-      <BibliographyTable bibliographyList={bibliographyList} />
-    </div>
+    <Transition show={opened} as={Fragment}>
+      <HeadlessDialog
+        open={opened}
+        onClose={onClose}
+        className="fixed z-[2147483550]"
+        style={{
+          left: `${dialogPosition.x}px`,
+          top: `${dialogPosition.y}px`,
+        }}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-200"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-150"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className={styles.bibliographile__dialog}>
+            <HeadlessDialog.Panel className="w-full max-w-[80vw] max-h-[80vh] overflow-auto bg-white rounded-lg shadow-lg p-4">
+              <div className={styles.bibliographile__dialog__header}>
+                <HeadlessDialog.Title className={styles.bibliographile__dialog__title}>
+                  「{searchTerm}」を含む書籍
+                </HeadlessDialog.Title>
+                <CloseButton onClose={onClose} />
+              </div>
+              <BibliographyTable bibliographyList={bibliographyList} />
+            </HeadlessDialog.Panel>
+          </div>
+        </Transition.Child>
+      </HeadlessDialog>
+    </Transition>
   );
 };

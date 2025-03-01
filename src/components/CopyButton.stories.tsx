@@ -1,6 +1,6 @@
 import type { Story } from "@ladle/react";
 import { CopyButton } from "./CopyButton";
 
-const onCopy = () => console.log("copy");
-
-export const Default: Story = () => <CopyButton onCopy={onCopy} />;
+export const Default: Story = () => (
+  <CopyButton text="This is sample text to copy" />
+);
